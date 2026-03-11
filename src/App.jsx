@@ -178,13 +178,6 @@ const App = () => {
 
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none"></div>
                 </div>
-                
-                <div className="absolute -right-12 top-20 hidden xl:block animate-bounce-slow">
-                  <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-2xl">
-                    <p className="text-gold font-bold text-xs mb-1 uppercase tracking-wider">AR View Active</p>
-                    <p className="text-[10px] opacity-60">Scorpius & The Moon visible</p>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -345,8 +338,8 @@ const App = () => {
             <div className="grid grid-cols-2 gap-16 md:gap-24">
               <FooterGroup title="Project" links={[
                 { l: 'GitHub', h: 'https://github.com/sky-map-team/stardroid' },
-                { l: 'License', h: 'https://github.com/sky-map-team/stardroid/blob/master/LICENSE' },
-                { l: 'Privacy', h: 'https://github.com/sky-map-team/stardroid/blob/master/docs/PrivacyPolicy.md' }
+                { l: 'License', h: 'https://github.com/sky-map-team/stardroid/blob/master/LICENSE.md' },
+                { l: 'Privacy', h: 'https://github.com/sky-map-team/stardroid/blob/master/PRIVACY_POLICY.md' }
               ]} />
               <FooterGroup title="Community" links={[
                 { l: 'Issues', h: 'https://github.com/sky-map-team/stardroid/issues' },
