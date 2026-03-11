@@ -11,7 +11,8 @@ import {
   Star, 
   ChevronRight,
   Monitor,
-  Info
+  Info,
+  Twitter
 } from 'lucide-react';
 
 const COLORS = {
@@ -164,7 +165,7 @@ const App = () => {
                 <div className="absolute inset-0 bg-gold/10 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                 
                 <div className="relative w-[300px] md:w-[340px] aspect-[9/19] bg-black rounded-[3rem] p-3 border-[10px] border-[#1f2937] shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-hidden transform lg:rotate-[-3deg] group-hover:rotate-0 transition-transform duration-700 ease-out">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#1f2937] rounded-b-2xl z-20"></div>
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-[#1f2937] rounded-b-xl z-20"></div>
                   
                   <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-navy">
                     <img 
@@ -316,7 +317,8 @@ const App = () => {
                 </div>
               </div>
               <a 
-                href="#" 
+                href="https://www.buymeacoffee.com/skymapdevs"
+                target="_blank"
                 className="group flex items-center gap-4 px-12 py-6 rounded-2xl font-black text-xl transition-all bg-gold text-navy hover:scale-105 hover:brightness-110 shadow-[0_0_40px_rgba(255,159,28,0.3)]"
               >
                 Support us <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
@@ -355,9 +357,9 @@ const App = () => {
           </div>
           <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold text-starlight/20 uppercase tracking-[0.3em]">
             <span>© {new Date().getFullYear()} Sky Map Devs</span>
-            <div className="flex gap-8">
-              <a href="https://github.com/sky-map-team/stardroid" className="hover:text-gold transition-colors underline">GitHub</a>
-              <a href="https://www.facebook.com/groups/113507592330/" className="hover:text-gold transition-colors underline">Facebook</a>
+            <div className="flex gap-8 items-center">
+              <a href="https://x.com/skymapdevs" target="_blank" className="hover:text-gold transition-colors underline flex items-center gap-1">X Account</a>
+              <a href="https://www.facebook.com/groups/113507592330/" target="_blank" className="hover:text-gold transition-colors underline">Facebook</a>
             </div>
           </div>
         </div>
@@ -391,20 +393,30 @@ const TimelineItem = ({ year, title, color, desc }) => (
   </div>
 );
 
-const HelpItem = ({ title, content }) => (
-  <div className="group rounded-3xl bg-white/[0.03] border border-white/5 transition-all duration-300 hover:bg-white/[0.07] hover:border-white/20">
-    <div className="p-8 cursor-default">
-      <h4 className="text-xl font-bold flex items-center gap-4 text-white uppercase tracking-tight">
-        <div className="w-1.5 h-1.5 rounded-full bg-gold"></div> {title}
-      </h4>
-      <div className="max-h-0 overflow-hidden opacity-0 group-hover:max-h-60 group-hover:opacity-100 group-hover:mt-6 transition-all duration-500 ease-in-out">
-        <p className="text-starlight/50 text-sm leading-relaxed font-light border-t border-white/5 pt-6 italic">
-          {content}
-        </p>
+const HelpItem = ({ title, content }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <div 
+      className={`group rounded-3xl bg-white/[0.03] border border-white/5 transition-all duration-300 hover:bg-white/[0.07] hover:border-white/20 ${isOpen ? 'bg-white/[0.07] border-white/20' : ''}`}
+      onClick={() => setIsOpen(!isOpen)}
+    >
+      <div className="p-8 cursor-pointer">
+        <h4 className="text-xl font-bold flex items-center justify-between gap-4 text-white uppercase tracking-tight">
+          <div className="flex items-center gap-4">
+            <div className="w-1.5 h-1.5 rounded-full bg-gold"></div> {title}
+          </div>
+          <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        </h4>
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-60 opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
+          <p className="text-starlight/50 text-sm leading-relaxed font-light border-t border-white/5 pt-6 italic">
+            {content}
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const FooterGroup = ({ title, links }) => (
   <div className="space-y-6 text-left">
