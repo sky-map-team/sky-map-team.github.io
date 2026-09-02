@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { 
-  Download, 
   Github, 
   History, 
   Coffee, 
@@ -12,7 +11,8 @@ import {
   ChevronRight,
   Monitor,
   Info,
-  Twitter
+  Search,
+  Moon
 } from 'lucide-react';
 
 const COLORS = {
@@ -24,13 +24,34 @@ const COLORS = {
   planetRed: '#E05C34'
 };
 
-const LOGO_URL = "https://raw.githubusercontent.com/sky-map-team/stardroid/master/assets/skymap-logo-large.png";
-const FALLBACK_SCREENSHOT = "https://raw.githubusercontent.com/sky-map-team/stardroid/master/docs/design/screenshots/main_view.png";
+const LOGO_URL = "/images/skymap-logo-large.png";
+const FALLBACK_SCREENSHOT = "/images/6_en-US.jpeg";
 
 const GooglePlayIcon = () => (
   <svg viewBox="0 0 512 512" className="w-5 h-5" fill="currentColor">
     <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 36c-1.1 2.1-1.7 4.4-1.7 6.8v426.4c0 2.4.6 4.8 1.7 6.8L250.8 256 47 36zM325.3 277.7l60.1 60.1L104.6 499l220.7-221.3zM347.3 256l67.5 67.5 70.2-40.3c15-8.6 25.2-24.5 25.2-42.6s-10.2-34-25.2-42.6l-70.2-40.3L347.3 256z" />
   </svg>
+);
+
+const STARS = [...Array(80)].map(() => ({
+  top: `${Math.random() * 100}%`,
+  left: `${Math.random() * 100}%`,
+  size: `${Math.random() * 2}px`,
+  delay: `${Math.random() * 5}s`,
+  opacity: Math.random() * 0.5 + 0.2
+}));
+
+const NavItem = ({ label, target, onNavigate }) => (
+  <button 
+    onClick={() => {
+      const el = document.getElementById(target);
+      el?.scrollIntoView({ behavior: 'smooth' });
+      onNavigate?.();
+    }}
+    className="text-starlight hover:text-gold transition-colors font-medium text-xs uppercase tracking-widest"
+  >
+    {label}
+  </button>
 );
 
 const App = () => {
@@ -42,18 +63,7 @@ const App = () => {
     { id: 'F00nEiJ9wJs', title: 'Sky Map Droid Ad' }
   ];
 
-  const NavItem = ({ label, target }) => (
-    <button 
-      onClick={() => {
-        const el = document.getElementById(target);
-        el?.scrollIntoView({ behavior: 'smooth' });
-        setIsMenuOpen(false);
-      }}
-      className="text-starlight hover:text-gold transition-colors font-medium text-xs uppercase tracking-widest"
-    >
-      {label}
-    </button>
-  );
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <div className="min-h-screen font-sans selection:bg-gold selection:text-navy" style={{ backgroundColor: COLORS.navy, color: COLORS.starlight }}>
@@ -61,17 +71,17 @@ const App = () => {
       {/* --- COSMIC BACKGROUND --- */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,#1B263B_0%,transparent_60%)] opacity-40"></div>
-        {[...Array(80)].map((_, i) => (
+        {STARS.map((star, i) => (
           <div 
             key={i} 
             className="absolute rounded-full bg-white animate-pulse" 
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 2}px`,
-              height: `${Math.random() * 2}px`,
-              animationDelay: `${Math.random() * 5}s`,
-              opacity: Math.random() * 0.5 + 0.2
+              top: star.top,
+              left: star.left,
+              width: star.size,
+              height: star.size,
+              animationDelay: star.delay,
+              opacity: star.opacity
             }}
           />
         ))}
@@ -85,7 +95,6 @@ const App = () => {
               src={LOGO_URL} 
               alt="Sky Map Logo" 
               className="h-10 w-auto object-contain transition-transform group-hover:scale-110"
-              onError={(e) => { e.target.src = "https://raw.githubusercontent.com/sky-map-team/stardroid/master/assets/icon_high_res.png"; }}
             />
             <span className="text-xl font-black tracking-tighter hidden sm:block uppercase">
               SKY <span style={{ color: COLORS.gold }}>MAP</span>
@@ -93,14 +102,14 @@ const App = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-10">
-            <NavItem label="Features" target="features" />
-            <NavItem label="Videos" target="videos" />
-            <NavItem label="History" target="history" />
-            <NavItem label="Help" target="help" />
-            <NavItem label="Donate" target="support" />
+            <NavItem label="Features" target="features" onNavigate={closeMenu} />
+            <NavItem label="Videos" target="videos" onNavigate={closeMenu} />
+            <NavItem label="History" target="history" onNavigate={closeMenu} />
+            <NavItem label="Help" target="help" onNavigate={closeMenu} />
+            <NavItem label="Donate" target="support" onNavigate={closeMenu} />
             <a 
               href="https://play.google.com/store/apps/details?id=com.google.android.stardroid" 
-              target="_blank" 
+              target="_blank" rel="noopener noreferrer" 
               className="flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-xs transition-all hover:brightness-110 hover:shadow-xl hover:shadow-gold/20"
               style={{ backgroundColor: COLORS.gold, color: COLORS.navy }}
             >
@@ -108,18 +117,24 @@ const App = () => {
             </a>
           </div>
 
-          <button className="md:hidden text-starlight" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button
+            className="md:hidden text-starlight"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 w-full p-8 flex flex-col gap-8 border-b border-white/10 shadow-2xl" style={{ backgroundColor: COLORS.navy }}>
-            <NavItem label="Features" target="features" />
-            <NavItem label="Videos" target="videos" />
-            <NavItem label="History" target="history" />
-            <NavItem label="Help" target="help" />
-            <NavItem label="Donate" target="support" />
+          <div id="mobile-menu" className="md:hidden absolute top-20 left-0 w-full p-8 flex flex-col gap-8 border-b border-white/10 shadow-2xl" style={{ backgroundColor: COLORS.navy }}>
+            <NavItem label="Features" target="features" onNavigate={closeMenu} />
+            <NavItem label="Videos" target="videos" onNavigate={closeMenu} />
+            <NavItem label="History" target="history" onNavigate={closeMenu} />
+            <NavItem label="Help" target="help" onNavigate={closeMenu} />
+            <NavItem label="Donate" target="support" onNavigate={closeMenu} />
           </div>
         )}
       </nav>
@@ -140,7 +155,7 @@ const App = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a 
               href="https://play.google.com/store/apps/details?id=com.google.android.stardroid"
-              target="_blank"
+              target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-3 px-10 py-5 rounded-2xl font-black text-lg transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-gold/20 w-full sm:w-auto"
               style={{ backgroundColor: COLORS.gold, color: COLORS.navy }}
             >
@@ -148,7 +163,7 @@ const App = () => {
             </a>
             <a 
               href="https://github.com/sky-map-team/stardroid"
-              target="_blank"
+              target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-3 px-10 py-5 rounded-2xl font-bold text-lg border-2 border-white/10 hover:bg-white/5 transition-all w-full sm:w-auto"
             >
               <Github className="w-6 h-6" /> View Source
@@ -161,22 +176,19 @@ const App = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
             <div className="order-2 lg:order-1 flex justify-center lg:justify-start">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gold/10 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-                
-                <div className="relative w-[300px] md:w-[340px] aspect-[9/19] bg-black rounded-[3rem] p-3 border-[10px] border-[#1f2937] shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-hidden transform lg:rotate-[-3deg] group-hover:rotate-0 transition-transform duration-700 ease-out">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-[#1f2937] rounded-b-xl z-20"></div>
-                  
-                  <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-navy">
+              <div className="relative">
+                <div className="relative w-[300px] md:w-[340px] aspect-[9/19.5] rounded-[3rem] bg-[#0b0f16] p-2 shadow-[0_0_80px_rgba(0,0,0,0.8)] ring-2 ring-[#46566b] lg:rotate-[-3deg]">
+                  <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden bg-navy ring-1 ring-white/10">
                     <img 
-                      src="images/6_en-US.jpeg"
+                      src="/images/hero_sky_view.jpeg"
                       alt="Sky Map Interface" 
                       className="w-full h-full object-cover brightness-110 contrast-110"
                       onError={(e) => { e.target.src = FALLBACK_SCREENSHOT; }}
                     />
+                    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-black ring-1 ring-white/20 z-20"></div>
                   </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none"></div>
                 </div>
               </div>
             </div>
@@ -193,7 +205,7 @@ const App = () => {
                 Our augmented reality technology uses your device's sensors to paint the heavens on your screen. Whether you're tracking Scorpius or locating the Moon, Sky Map updates instantly as you move.
               </p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 sm:auto-rows-fr">
                 <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
                   <h4 className="font-bold mb-2 flex items-center gap-2 uppercase text-sm tracking-wide text-white">
                     <Monitor className="w-4 h-4 text-lensBlue" /> Multi-Layer View
@@ -202,9 +214,21 @@ const App = () => {
                 </div>
                 <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
                   <h4 className="font-bold mb-2 flex items-center gap-2 uppercase text-sm tracking-wide text-white">
+                    <Search className="w-4 h-4 text-gold" /> Search the Sky
+                  </h4>
+                  <p className="text-xs opacity-50">Can't spot Saturn? Search for any star, planet, or constellation and follow the on-screen guide straight to it.</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
+                  <h4 className="font-bold mb-2 flex items-center gap-2 uppercase text-sm tracking-wide text-white">
                     <Star className="w-4 h-4 text-planetGreen" /> Stellar Database
                   </h4>
                   <p className="text-xs opacity-50">Thousands of celestial bodies mapped with scientific precision.</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
+                  <h4 className="font-bold mb-2 flex items-center gap-2 uppercase text-sm tracking-wide text-white">
+                    <Moon className="w-4 h-4 text-planetRed" /> Night Mode
+                  </h4>
+                  <p className="text-xs opacity-50">Red-shifted display preserves your dark-adapted vision under the stars.</p>
                 </div>
               </div>
             </div>
@@ -231,7 +255,8 @@ const App = () => {
         <section id="videos" className="py-24 px-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col items-center text-center mb-16">
-              <h2 className="text-4xl font-black mb-4 tracking-tight uppercase tracking-widest text-white">Sky Map Cinema</h2>
+              <h2 className="text-4xl font-black mb-4 uppercase tracking-widest text-white">Sky Map Cinema</h2>
+              <p className="text-starlight/60 font-light mb-6">A few iconic videos from Sky Map's journey so far.</p>
               <div className="w-20 h-1 rounded-full" style={{ backgroundColor: COLORS.gold }}></div>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
@@ -299,7 +324,7 @@ const App = () => {
             </div>
 
             {/* REFINED SUPPORT CTA */}
-            <div id="support" className="p-12 rounded-[3rem] bg-black/60 border border-white/20 flex flex-col md:flex-row items-center justify-between gap-10 shadow-3xl">
+            <div id="support" className="p-12 rounded-[3rem] bg-black/60 border border-white/20 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl">
               <div className="flex items-center gap-10">
                 <div className="w-20 h-20 rounded-[1.8rem] bg-gold/10 flex items-center justify-center text-gold shadow-inner shrink-0">
                   <Coffee className="w-10 h-10" />
@@ -311,7 +336,7 @@ const App = () => {
               </div>
               <a 
                 href="https://www.buymeacoffee.com/skymapdevs"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 className="group flex items-center gap-4 px-12 py-6 rounded-2xl font-black text-xl transition-all bg-gold text-navy hover:scale-105 hover:brightness-110 shadow-[0_0_40px_rgba(255,159,28,0.3)]"
               >
                 Support us <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
@@ -327,10 +352,10 @@ const App = () => {
           <div className="flex flex-col md:flex-row justify-between items-start gap-16 mb-16">
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                <img src={LOGO_URL} alt="Logo" className="h-10 w-auto" />
+                <img src={LOGO_URL} alt="Sky Map logo" className="h-10 w-auto" />
                 <span className="text-2xl font-black uppercase tracking-tighter text-white">Sky Map Devs</span>
               </div>
-              <p className="text-starlight/30 max-w-xs text-sm leading-relaxed font-light">
+              <p className="text-starlight/70 max-w-xs text-sm leading-relaxed font-light">
                 An open-source planetarium that lives in your pocket. Built by stargazers, for stargazers.
               </p>
             </div>
@@ -348,11 +373,11 @@ const App = () => {
               ]} />
             </div>
           </div>
-          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold text-starlight/20 uppercase tracking-[0.3em]">
+          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold text-starlight/60 uppercase tracking-[0.3em]">
             <span>© {new Date().getFullYear()} Sky Map Devs</span>
             <div className="flex gap-8 items-center">
-              <a href="https://x.com/skymapdevs" target="_blank" className="hover:text-gold transition-colors underline flex items-center gap-1">X Account</a>
-              <a href="https://www.facebook.com/groups/113507592330/" target="_blank" className="hover:text-gold transition-colors underline">Facebook</a>
+              <a href="https://x.com/skymapdevs" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors underline flex items-center gap-1">X Account</a>
+              <a href="https://www.facebook.com/groups/113507592330/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors underline">Facebook</a>
             </div>
           </div>
         </div>
@@ -362,8 +387,8 @@ const App = () => {
 };
 
 const FeatureCard = ({ icon, title, description }) => (
-  <div className="p-12 rounded-[2.5rem] bg-white/[0.03] border border-white/5 hover:border-gold/30 hover:bg-white/[0.05] transition-all group">
-    <div className="mb-8 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500">
+  <div className="p-12 rounded-[2.5rem] bg-white/[0.03] border border-white/5">
+    <div className="mb-8">
       {icon}
     </div>
     <h3 className="text-3xl font-black mb-4 uppercase tracking-tighter text-white">{title}</h3>
@@ -392,7 +417,17 @@ const HelpItem = ({ title, content }) => {
   return (
     <div 
       className={`group rounded-3xl bg-white/[0.03] border border-white/5 transition-all duration-300 hover:bg-white/[0.07] hover:border-white/20 ${isOpen ? 'bg-white/[0.07] border-white/20' : ''}`}
+      role="button"
+      tabIndex={0}
+      aria-expanded={isOpen}
       onClick={() => setIsOpen(!isOpen)}
+      onKeyDown={(e) => {
+        if (e.repeat) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }
+      }}
     >
       <div className="p-8 cursor-pointer">
         <h4 className="text-xl font-bold flex items-center justify-between gap-4 text-white uppercase tracking-tight">
@@ -401,8 +436,8 @@ const HelpItem = ({ title, content }) => {
           </div>
           <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
         </h4>
-        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-60 opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
-          <p className="text-starlight/50 text-sm leading-relaxed font-light border-t border-white/5 pt-6 italic">
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-96 opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
+          <p className="text-starlight/70 text-sm leading-relaxed border-t border-white/5 pt-6">
             {content}
           </p>
         </div>
@@ -416,7 +451,7 @@ const FooterGroup = ({ title, links }) => (
     <h5 className="font-black text-gold uppercase tracking-[0.2em] text-[10px]">{title}</h5>
     <div className="flex flex-col gap-4">
       {links.map((link, i) => (
-        <a key={i} href={link.h} className="text-starlight/30 hover:text-gold transition-colors text-sm font-medium">
+        <a key={i} href={link.h} className="text-starlight/70 hover:text-gold transition-colors text-sm font-medium">
           {link.l}
         </a>
       ))}

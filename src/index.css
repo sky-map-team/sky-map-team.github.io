@@ -1,2 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --color-navy: #0D1B2A;
+  --color-gold: #FF9F1C;
+  --color-starlight: #E0E1DD;
+  --color-lensBlue: #7EC8E3;
+  --color-planetGreen: #4DB848;
+  --color-planetRed: #E05C34;
+}
+
